@@ -30,6 +30,7 @@ export class AuthController {
   @Post('/register')
   @Public()
   registerUser(@Body() registerDto: CreateAuthDto) {
+    console.log(registerDto);
     return this.authService.handleRegister(registerDto);
   }
 
@@ -38,13 +39,21 @@ export class AuthController {
   senMail() {
     this.mailerService
       .sendMail({
-        to: 'nguyentrungkien040921@gmail.com', // list of receivers
-        subject: 'Testing Nest MailerModule ✔', // Subject line
+        to: 'trungkien040921@gmail.com', // list of receivers
+        subject: 'Thông báo khoản vay của bạn đã được duyệt ✔', // Subject line
         text: 'welcome', // plaintext body
-        html: '<b>Tôi đã gửi email thành công! HIHI.</b>', // HTML body content
+        template: 'register', // Tên template dùng để render nội dung email
+        context: {
+          // Các biến sẽ truyền vào template
+          name: 'Quốc Thái',
+          amount: '35.000.000đ',
+          term: '3',
+          disbursementDate: '18/7/2025',
+          repaymentMethod: 'Tiền mặt',
+        },
       })
       .then(() => {})
       .catch(() => {});
-    return 'Thành công!';
+    return 'Gửi thành công! HaHa';
   }
 }

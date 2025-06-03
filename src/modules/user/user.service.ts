@@ -14,11 +14,13 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateAuthDto } from 'src/auth/dto/create-auth.dto';
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+    private readonly mailerService: MailerService,
   ) {}
   async findAllUser(query: string, current: number, pageSize: number) {
     const { filter, sort } = aqp(query);
@@ -134,17 +136,36 @@ export class UserService {
         `Email ${email} đã tồn tại. Vui lòng chọn email khác`,
       );
     }
-
     // Băm mật khẩu
     const hashPassword = await hashPasswordHelper(password);
+    const codeId = uuidv4();
     const user = await this.userModel.create({
       name,
       email,
       password: hashPassword,
       isActive: false,
-      codeId: uuidv4(),
+      codeId: codeId,
       codeExpired: dayjs().add(1, 'M'),
+      createAt: new Date(),
     });
+
+    try {
+      // Gửi email đăng kí thành công
+      await this.mailerService.sendMail({
+        to: user.email, // list of receivers
+        subject: 'Thông báo đăng kí người dùng thành công ✔', // Subject line
+        template: 'register', // Tên template dùng để render nội dung email
+        context: {
+          // Các biến sẽ truyền vào template
+          username: user.name,
+          email: user.email,
+          registrationDate: user.createAt,
+        },
+      });
+    } catch (error) {
+      console.error('Gửi email thất bại: ', error);
+    }
+
     return {
       message: 'Tạo người dùng thành công!',
       id: user._id,

@@ -43,10 +43,10 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
           },
         },
         defaults: {
-          from: '"nest-modules" <modules@nestjs.com>',
+          from: `NESTJS-LEARN <${config.get<string>('MAIL_USER')}>`,
         },
         template: {
-          dir: __dirname + '/templates',
+          dir: __dirname + '/email/templates',
           adapter: new HandlebarsAdapter(),
           options: {
             strict: true,
