@@ -33,6 +33,12 @@ export class User {
 
   @Prop()
   address: string;
+
+  @Prop()
+  codeId: string;
+
+  @Prop()
+  codeExpired: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User); // Dòng này dùng để chuyển class user thành schema của mongoose schema

@@ -11,8 +11,9 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Public } from '../../decorator/customize';
 
-@Controller('users')
+@Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -38,5 +39,11 @@ export class UserController {
   @Delete('/delete-user/:id')
   deleteUser(@Param('id') id: string) {
     return this.userService.deleteUser(id);
+  }
+
+  @Get('/get-profile/:userId')
+  @Public() // Khai báo public để route này không cần sử dụng guard
+  getProfile(@Param('userId') userId: string) {
+    return this.userService.getProfile(userId);
   }
 }

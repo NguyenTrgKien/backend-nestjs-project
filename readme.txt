@@ -83,4 +83,29 @@
         + @nestjs/passport: thư viện cầu nối giữa nestjs và passport giúp tích hợp passport vào nestjs một cách mươt mà
         + passport: thư viện authentication middleware phổ biến cho NodeJS, hỗ trợ nhiều loại xác thực (local, Google, FaceBook...) là một nền tảng chỉnh để xác thực
         + passport-local: là một chiến lượt cụ thể cho passport, chiến lượt local chính là xác thực bảng username, password 
-    - Guards: là một cơ chế bảo vệ để kiểm soát truy cập vào các route(đường dẫn API), guards quyết định xem một yêu cầu request có được đi tiếp không
+    - Guards: là một cơ chế bảo vệ để kiểm soát truy cập vào các route(đường dẫn API), Kiểm tra xem accessToken có hợp lệ hay không, guards quyết định xem một yêu cầu request có được đi tiếp không
+    - npm install --save-dev @nestjs/config: tải thư viện này dùng để có thể thao tác với file biến môi trường
+    ** Sử dụng guards toàn cục cho ứng dụng
+    - Thên đoạn code này vào app.module providers: [
+                                                        {
+                                                            provide: APP_GUARD,
+                                                            useClass: AuthGuard,
+                                                        },
+                                                    ],
+    - Có thể config để một vài route có thể không cần sử dụng guards
+
+
+// Các trạng thái trong exception (ngoại lệ)
+    - HttpException: Các lỗi HTTP(kèm status code)
+    - BadRequestException: Dữ liệu đầu vào không hợp lệ                                     
+    - UnauthorizedException: Chưa xác thực (thiếu token hoặc token sai)
+    - ForbiddenException: Từ chối truy cập mặc dù đã xác thực 
+    - NotFoundException: Không tìm thấy tài nguyên
+    - ConflictException: Xung đột (dữ liệu đã tồn tại, ví dụ tạo user trùng email)
+    - InternalServerErrorException: Lỗi phía server (bạn không cần tạo lỗi này thường xuyên)
+
+
+// Gửi mail trong nestjs
+    - Cài đặt:
+    - npm install --save @nestjs-modules/mailer nodemailer
+    - npm install handlebars

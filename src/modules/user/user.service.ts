@@ -1,4 +1,5 @@
 import {
+  BadGatewayException,
   BadRequestException,
   Injectable,
   NotFoundException,
@@ -10,6 +11,9 @@ import mongoose, { Model } from 'mongoose';
 import { hashPasswordHelper } from 'src/helpers/util';
 import aqp from 'api-query-params';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateAuthDto } from 'src/auth/dto/create-auth.dto';
+import { v4 as uuidv4 } from 'uuid';
+import dayjs from 'dayjs';
 
 @Injectable()
 export class UserService {
@@ -107,4 +111,43 @@ export class UserService {
   async findByEmail(email: string) {
     return await this.userModel.findOne({ email });
   }
+
+  async getProfile(userId: string) {
+    const isValidId = mongoose.isValidObjectId(userId); // Kiểm tra xem có phải là một ObjectId hợp lệ hay không
+    if (!isValidId) {
+      throw new BadGatewayException('Id người dùng không hợp lệ!');
+    }
+    const user = await this.userModel.findOne({ _id: userId });
+    if (!user) {
+      throw new NotFoundException('Không tìm thấy người dùng!');
+    }
+    return user;
+  }
+
+  handleRegister = async (registerDto: CreateAuthDto) => {
+    const { email, password, name } = registerDto;
+
+    // Kiểm tra email đã tồn tại?
+    const isExist = await this.userModel.findOne({ email });
+    if (isExist) {
+      throw new BadRequestException(
+        `Email ${email} đã tồn tại. Vui lòng chọn email khác`,
+      );
+    }
+
+    // Băm mật khẩu
+    const hashPassword = await hashPasswordHelper(password);
+    const user = await this.userModel.create({
+      name,
+      email,
+      password: hashPassword,
+      isActive: false,
+      codeId: uuidv4(),
+      codeExpired: dayjs().add(1, 'M'),
+    });
+    return {
+      message: 'Tạo người dùng thành công!',
+      id: user._id,
+    };
+  };
 }

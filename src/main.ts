@@ -4,7 +4,7 @@ import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.setGlobalPrefix('api/v1', { exclude: [''] }); // thêm tiền tố vòa api và ngoại trừ url chính
+  app.setGlobalPrefix('api/v1', { exclude: [''] }); // thêm tiền tố vào api và ngoại trừ url chính
   app.useGlobalPipes(
     new ValidationPipe({
       // Giúp kiểm tra dữ liệu đầu vào từ các request, đảm bảo dữ liệu hợp lệ trước khi được xử lý bởi controller hoặc service

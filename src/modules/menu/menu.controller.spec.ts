@@ -10,7 +10,6 @@ describe('MenuController', () => {
       controllers: [MenuController],
       providers: [MenuService],
     }).compile();
-
     controller = module.get<MenuController>(MenuController);
   });
 
