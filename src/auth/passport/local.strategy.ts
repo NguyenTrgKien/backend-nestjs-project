@@ -1,5 +1,5 @@
 import {
-  BadRequestException,
+  // BadRequestException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -22,18 +22,17 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(username: string, password: string): Promise<User> {
-    console.log('Dữ liệu đây ', username, password);
-
     const user = (await this.authService.validateUser(
       username,
       password,
     )) as User;
+    console.log(user);
     if (!user) {
       throw new UnauthorizedException('Email/Mật khẩu không hợp lệ!');
     }
-    if (user.isActive === false) {
-      throw new BadRequestException('Tài khoản chưa được kích hoạt!');
-    }
+    // if (user.isActive === false) {
+    //   throw new BadRequestException('Tài khoản chưa được kích hoạt!');
+    // }
     return user;
   }
 }

@@ -23,6 +23,7 @@ export class AuthController {
   @Post('/sign-in')
   @Public()
   login(@Request() req: RequestWithUser) {
+    console.log(req.user);
     const { email } = req.user;
     return this.authService.login(email);
   }

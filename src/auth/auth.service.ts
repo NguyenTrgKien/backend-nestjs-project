@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { comparePassword } from 'src/helpers/util';
 import { UserService } from 'src/modules/user/user.service';
@@ -13,21 +17,25 @@ export class AuthService {
 
   async validateUser(email: string, password: string): Promise<unknown> {
     const user = await this.userService.findByEmail(email);
-    const isValidPassword = comparePassword(password, user?.password as string);
-    if (!user || !isValidPassword) {
-      return null;
+    if (!user) {
+      throw new NotFoundException('Email không tồn tại!');
+    }
+    const isValidPassword = await comparePassword(password, user?.password);
+    if (!isValidPassword) {
+      throw new UnauthorizedException('Mật khẩu không đúng!');
     }
     return user;
   }
 
   async login(email: string): Promise<any> {
+    console.log(email);
     const user = await this.userService.findByEmail(email);
     if (!user) {
       throw new NotFoundException('Người dùng không tồn tại!');
     }
-
     const payload = { sub: user._id, username: user.email };
     return {
+      user,
       access_token: await this.jwtService.signAsync(payload),
     };
   }

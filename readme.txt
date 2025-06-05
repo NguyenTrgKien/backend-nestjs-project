@@ -105,6 +105,14 @@
     - InternalServerErrorException: Lỗi phía server (bạn không cần tạo lỗi này thường xuyên)
 
 
+// Các trạng thái trả về:
+    ** Success(trạng thái thành công)
+    - 200 OK: Yêu cầu thành công
+    - 201 Created: Taì nguyên được tạo
+    - 204 No Content: Thành công nhưng không trả dữ liệu
+    ** Redirect:
+    - 301 Moved P
+
 // Gửi mail trong nestjs
     - Cài đặt:
     - npm install --save @nestjs-modules/mailer nodemailer
